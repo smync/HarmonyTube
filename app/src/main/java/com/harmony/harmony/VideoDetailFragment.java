@@ -75,7 +75,7 @@ public class VideoDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_video_detail, container, false);
         YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
         FragmentTransaction transaction =getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.youtube_fragment, youTubePlayerFragment).commit();
+        transaction.add(R.id.youtube_fragment, youTubePlayerFragment).addToBackStack(null).commit();
         youTubePlayerFragment.initialize(Config.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
@@ -83,7 +83,7 @@ public class VideoDetailFragment extends Fragment {
                     YPlayer = youTubePlayer;
                     YPlayer.setFullscreen(false);
 
-                    YPlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
+                    YPlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                     YPlayer.setShowFullscreenButton(true);
 
 /*

@@ -13,32 +13,28 @@
             android:icon="@drawable/ic_composers_black"
             android:title="Composers" />
         <item
-            android:id="@+id/nav_performers"
+            android:id="@+id/nav_operas"
             android:icon="@drawable/ic_performers_black"
-            android:title="Performers" />
+            android:title="Operas" />
+        <item
+            android:id="@+id/nav_documentaries"
+            android:icon="@drawable/ic_performers_black"
+            android:title="Documentaries" />
 
     </group>
 
-    <item android:title="Settings">
+
+
+    <item android:title="Settings &#38; Contact">
         <menu>
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_manage"
                 android:title="Settings" />
             <item
-                android:id="@+id/nav_privacy"
-                android:icon="@drawable/ic_privacy"
-                android:title="Privacy" />
-
-        </menu>
-    </item>
-
-    <item android:title="Communication">
-        <menu>
-            <item
                 android:id="@+id/nav_contact"
                 android:icon="@drawable/ic_contact"
-                android:title="Contact" />
+                android:title="Contact / Feedback " />
             <item
                 android:id="@+id/nav_rate"
                 android:icon="@drawable/ic_rate"

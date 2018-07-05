@@ -1,21 +1,23 @@
 package com.harmony.harmony;
 
 
-
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.harmony.harmony.adapters.VideoAdapter;
-import com.harmony.harmony.models.Video;
+import com.harmony.harmony.adapters.ComposerAdapter;
+import com.harmony.harmony.models.Composer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +35,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 
-public class VideoListFragment extends Fragment {
+public class ComposerListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,18 +45,18 @@ public class VideoListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private RecyclerView mVideoRecyclerView;
-    private VideoAdapter mAdapter;
-    private ArrayList<Video> mVideoCollection;
+    private RecyclerView mComposerRecyclerView;
+    private ComposerAdapter mAdapter;
+    private ArrayList<Composer> mComposerCollection;
 
-    public VideoListFragment() {
+    public ComposerListFragment() {
         // Required empty public constructor
     }
 
 
     // TODO: Rename and change types and number of parameters
-    public static VideoListFragment newInstance(String param1, String param2) {
-        VideoListFragment fragment = new VideoListFragment();
+    public static ComposerListFragment newInstance(String param1, String param2) {
+        ComposerListFragment fragment = new ComposerListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -72,11 +74,14 @@ public class VideoListFragment extends Fragment {
     }
 
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View inflatedView = inflater.inflate(R.layout.fragment_composer_list, container, false);
 
-        View inflatedView = inflater.inflate(R.layout.fragment_video_list, container, false);
+
 
         init(inflatedView);
         new FetchDataTask().execute();
@@ -85,17 +90,21 @@ public class VideoListFragment extends Fragment {
     }
 
     private void init(View inflatedView) {
-        mVideoRecyclerView = inflatedView.findViewById(R.id.videolist_recycler);
-        mVideoRecyclerView.setHasFixedSize(true);
+        mComposerRecyclerView = inflatedView.findViewById(R.id.composerlist_recycler);
 
+        //mComposerRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),4));
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4,StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+        mComposerRecyclerView.setLayoutManager(layoutManager);
 
-        mVideoRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mComposerRecyclerView.setHasFixedSize(true);
+        //  mComposerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mVideoCollection = new ArrayList<>();
-        mAdapter = new VideoAdapter(mVideoCollection, this);
-        mVideoRecyclerView.setAdapter(mAdapter);
+        mComposerCollection = new ArrayList<>();
+        mAdapter = new ComposerAdapter(mComposerCollection, this);
+        mComposerRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.setOnItemClickListener(new VideoAdapter.OnItemClickListener() {
+        mAdapter.setOnItemClickListener(new ComposerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, long id) {
                 //Toast.makeText(getActivity(),"CLICKED "+mVideoCollection.get(position).getTitle(), Toast.LENGTH_SHORT).show();
@@ -115,25 +124,13 @@ public class VideoListFragment extends Fragment {
 
 
     public class FetchDataTask extends AsyncTask<Void, Void, Void> {
-        private String mVideoString;
+        private String mComposerString;
 
         @Override
         protected Void doInBackground(Void... params) {
-            String strText = getArguments().getString("type");
-            String strTextSearch = getArguments().getString("search");
-            String key="type";
-            if(strText == null) {
-                strText=strTextSearch;
-                key = "search";
-
-            }
-
-
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
-            String urlStr = getString(R.string.videos_api)+"?"+key+"="+strText;
-            Log.v("urlStr",urlStr);
-            Uri builtUri = Uri.parse(urlStr);
+            Uri builtUri = Uri.parse(getString(R.string.composers_api));
             URL url;
             try {
                 url = new URL(builtUri.toString());
@@ -160,43 +157,42 @@ public class VideoListFragment extends Fragment {
                     return null;
                 }
 
-                mVideoString = buffer.toString();
+                mComposerString = buffer.toString();
+                //JSONObject jsonObject = new JSONObject(mVideoString);
 
-                JSONArray jsonarray = new JSONArray(mVideoString);
+                //Log.v("Response", jsonObject.toString());
 
+                // JSONArray videosArray = jsonObject.getJSONArray("videos");
+                //JSONArray videosArray =  jsonObject.getJSONArray("");
+                JSONArray jsonarray = new JSONArray(mComposerString);
+
+                //list = new ArrayList<>();
                 for (int i = 0; i < jsonarray.length(); i++) {
 
-                    String title;
-                    String imageurl;
-                    String composer;
-                    String description;
-                    String performer;
-                    String videourl;
-                    String work;
-                    String date;
 
-                    JSONObject jVideo = (JSONObject) jsonarray.get(i);
+                    String composerName;
+                    String composerImageUrl;
 
-                    title = jVideo.getString("TITLE");
-                    imageurl = jVideo.getString("IMAGEURL");
-                    composer = jVideo.getString("COMPOSER");
-                    description = jVideo.getString("DESCRIPTION");
-                    performer = jVideo.getString("PERFORMER");
-                    videourl = jVideo.getString("VIDEOURL");
-                    work = jVideo.getString("WORK");
-                    date = jVideo.getString("DATE");
 
-                    Video video = new Video();
-                    video.setTitle(title);
-                    video.setComposer(composer);
-                    video.setDate(date);
-                    video.setDescription(description);
-                    video.setPerformer(performer);
-                    video.setWork(work);
-                    video.setImageurl(imageurl);
-                    video.setVideourl(videourl);
 
-                    mVideoCollection.add(video);
+
+                    JSONObject jComposer = (JSONObject) jsonarray.get(i);
+                    //jVideo = jVideo.getJSONObject("video");
+                    //jVideo = jVideo.getJSONObject("");
+
+
+                    composerName= jComposer.getString("NAME");
+                    composerImageUrl = jComposer.getString("IMAGEURL");
+
+
+
+                    Composer composer = new Composer();
+                    composer.setComposerName(composerName);
+                    composer.setComposerImageUrl(composerImageUrl);
+
+
+
+                    mComposerCollection.add(composer);
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();

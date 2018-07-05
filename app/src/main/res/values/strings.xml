@@ -6,10 +6,13 @@
     <string name="nav_header_subtitle">www.harmony.tv</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="videos_api"><![CDATA[https://s3.eu-central-1.amazonaws.com/webcontent-smync/videos.json]]></string>
+    <string name="videos_api"><![CDATA[http://178.62.53.70/videos.php]]></string>
+    <string name="composers_api"><![CDATA[http://178.62.53.70/composers.php]]></string>
+    <string name="title_activity_search">SearchActivity</string>
 
 </resources>
